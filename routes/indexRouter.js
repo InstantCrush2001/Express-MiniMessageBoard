@@ -4,6 +4,7 @@ const {
   getNewForm,
   postNewMessage,
   getMessageDetail,
+  validateMessage,
 } = require("../controllers/messagesController");
 
 const indexRouter = Router();
@@ -12,7 +13,7 @@ indexRouter.get("/", getMessages);
 
 indexRouter.get("/new", getNewForm);
 
-indexRouter.post("/new", postNewMessage);
+indexRouter.post("/new", validateMessage, postNewMessage);
 
 indexRouter.get("/message/:id", getMessageDetail);
 

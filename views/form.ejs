@@ -3,9 +3,17 @@
     <title>New Message</title>
   </head>
   <body>
+    <% if (locals.errors) { %>
+      <ul>
+        <% errors.forEach((error) => { %>
+          <li><%= error.msg %></li>
+        <% }); %>
+      </ul>
+    <% } %>
+
     <form method="POST" action="/new">
-      <div>Author: <input name="messageUser" /></div>
-      <div>Message: <input name="messageText" /></div>
+      <div>Author: <input name="messageUser" value="<%= locals.messageUser || '' %>" /></div>
+      <div>Message: <input name="messageText" value="<%= locals.messageText || '' %>"/></div>
       <button>Submit</button>
     </form>
   </body>

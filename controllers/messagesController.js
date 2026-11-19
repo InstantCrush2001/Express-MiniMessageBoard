@@ -1,4 +1,21 @@
+const { body, validationResult } = require("express-validator");
 const db = require("../db/queries");
+
+// validación de ambos campos Usuario y Mensaje
+const validateMessage = [
+  body("messageUser")
+    .trim()
+    .notEmpty()
+    .withMessage("El nombre es obligatorio.")
+    .isLength({ max: 255 })
+    .withMessage("El nombre no puede pasar de 255 caracteres."),
+  body("messageText")
+    .trim()
+    .notEmpty()
+    .withMessage("El mensaje es obligatorio.")
+    .isLength({ max: 255 })
+    .withMessage("El mensaje no puede pasar de 255 caracteres."),
+];
 
 async function getMessages(req, res) {
   let messages = await db.getAllMessages();
@@ -13,7 +30,7 @@ async function postNewMessage(req, res) {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    return res.status(404).render("form", {
+    return res.status(400).render("form", {
       errors: errors.array(),
       messageUser: req.body.messageUser,
       messageText: req.body.messageText,
@@ -42,6 +59,7 @@ async function getMessageDetail(req, res, next) {
 }
 
 module.exports = {
+  validateMessage,
   getMessages,
   getNewForm,
   postNewMessage,
