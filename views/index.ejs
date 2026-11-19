@@ -11,12 +11,12 @@
         <a class="new-link" href="/new">Nuevo mensaje</a>
 
         <% messages.forEach((message, id) => { %>
-            <a class="message" href="/message/<%= id %>">
+            <a class="message" href="/message/<%= message.id %>">
                 <p class="message-meta">
-                    <span class="message-user"><%= message.user %></span>
+                    <span class="message-user"><%= message.username %></span>
                     <span class="message-date"><%= message.added.toLocaleString("es-MX", { dateStyle: "short", timeStyle: "short" }) %></span>
                 </p>
-                <p class="message-text"><%= message.text %></p>
+                <p class="message-text"><%= message.message %></p>
             </a>
         <% }); %>
     </main>

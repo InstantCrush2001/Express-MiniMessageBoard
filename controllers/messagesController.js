@@ -1,6 +1,7 @@
-const messages = require("../data/messages");
+const db = require("../db/queries");
 
-function getMessages(req, res) {
+async function getMessages(req, res) {
+  let messages = await db.getAllMessages();
   res.render("index", { title: "Mini Messageboard", messages: messages });
 }
 
@@ -8,15 +9,25 @@ function getNewForm(req, res) {
   res.render("form");
 }
 
-function postNewMessage(req, res) {
+async function postNewMessage(req, res) {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(404).render("form", {
+      errors: errors.array(),
+      messageUser: req.body.messageUser,
+      messageText: req.body.messageText,
+    });
+  }
+
   const { messageText, messageUser } = req.body;
-  messages.push({ text: messageText, user: messageUser, added: new Date() });
+  await db.insertMessage(messageText, messageUser);
   res.redirect("/");
 }
 
-function getMessageDetail(req, res, next) {
+async function getMessageDetail(req, res, next) {
   const messageId = req.params.id;
-  const selectedMessage = messages[messageId];
+  const selectedMessage = await db.getMessage(messageId);
 
   if (!selectedMessage) {
     const err = new Error("Message not found");
@@ -25,9 +36,14 @@ function getMessageDetail(req, res, next) {
   }
 
   res.render("detail", {
-    title: `${selectedMessage.user}'s message`,
+    title: `${selectedMessage.username}'s message`,
     message: selectedMessage,
   });
 }
 
-module.exports = { getMessages, getNewForm, postNewMessage, getMessageDetail };
+module.exports = {
+  getMessages,
+  getNewForm,
+  postNewMessage,
+  getMessageDetail,
+};
